@@ -79,7 +79,7 @@ typedef enum {
     
     self.menuContainerView = [[UIView alloc] init];
     self.menuState = MFSideMenuStateClosed;
-    self.menuWidth = 270.0f;
+    self.menuWidth = [UIScreen mainScreen].bounds.size.width-40;
     self.menuSlideAnimationFactor = 3.0f;
     self.menuAnimationDefaultDuration = 0.2f;
     self.menuAnimationMaxDuration = 0.4f;
@@ -111,6 +111,10 @@ typedef enum {
     [super viewDidLoad];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:YES];
+}
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
@@ -229,6 +233,14 @@ typedef enum {
     
     [self addChildViewController:_centerViewController];
     [self.view addSubview:[_centerViewController view]];
+    
+    CGRect frame=centerViewController.view.frame;
+    NSLog(@"%@",[[NSUserDefaults standardUserDefaults] valueForKey:@"isRadioHide"]);
+    if ([[[NSUserDefaults standardUserDefaults] valueForKey:@"isRadioHide"] integerValue]==0) {
+        frame.size.height=[UIScreen mainScreen].bounds.size.height-60;
+    }
+   
+    centerViewController.view.frame=frame;
     [((UIViewController *)_centerViewController) view].frame = (CGRect){.origin = origin, .size=centerViewController.view.frame.size};
     
     [_centerViewController didMoveToParentViewController:self];
@@ -539,6 +551,7 @@ typedef enum {
         
         // pan gesture is attached to a custom view
         return YES;
+        return NO;
     }
     
     return NO;
